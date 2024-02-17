@@ -31,6 +31,7 @@ void main() async {
     AwesomeNotifications().requestPermissionToSendNotifications();
   }
 
+
   runApp(const MyApp());
 }
 
@@ -81,17 +82,16 @@ class _MainListScreenState extends State<MainListScreen> {
     Exam(
       course: 'Biology',
       timestamp: DateTime.now(),
-      description: 'Topics covered include cell biology, genetics, evolution, ecology, anatomy, and physiology.',
-      // New field
+      description: 'Topics covered include cell biology, genetics, evolution, ecology, anatomy, and physiology.', // New field
       classroom: '120', // New field
     ),
     Exam(
       course: 'Geography',
       timestamp: DateTime.now(),
-      description: 'Geography exam covers topics related to the physical and human aspects of the Earth. ',
-      // New field
+      description: 'Geography exam covers topics related to the physical and human aspects of the Earth. ', // New field
       classroom: '118', // New field
     ),
+    // Existing exams...
   ];
 
   @override
@@ -121,9 +121,12 @@ class _MainListScreenState extends State<MainListScreen> {
         title: const Text('Exams'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.calendar_month),
+            onPressed: _openCalendar,
+          ),
+          IconButton(
             icon: const Icon(Icons.add_circle),
-            onPressed: () =>
-            FirebaseAuth.instance.currentUser != null
+            onPressed: () => FirebaseAuth.instance.currentUser != null
                 ? _addExamFunction(context)
                 : _navigateToSignInPage(context),
           ),
@@ -214,6 +217,7 @@ class _MainListScreenState extends State<MainListScreen> {
     );
   }
 
+
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
   }
@@ -238,6 +242,12 @@ class _MainListScreenState extends State<MainListScreen> {
         });
   }
 
+  void _addExam(Exam exam) {
+    setState(() {
+      exams.add(exam);
+    });
+  }
+
   void _scheduleNotification(Exam exam) {
     final int notificationId = exams.indexOf(exam);
 
@@ -248,27 +258,11 @@ class _MainListScreenState extends State<MainListScreen> {
             title: exam.course,
             body: "You have an exam tomorrow!"),
         schedule: NotificationCalendar(
-            day: exam.timestamp
-                .subtract(const Duration(days: 1))
-                .day,
-            month: exam.timestamp
-                .subtract(const Duration(days: 1))
-                .month,
-            year: exam.timestamp
-                .subtract(const Duration(days: 1))
-                .year,
-            hour: exam.timestamp
-                .subtract(const Duration(days: 1))
-                .hour,
-            minute: exam.timestamp
-                .subtract(const Duration(days: 1))
-                .minute));
-  }
-
-  void _addExam(Exam exam) {
-    setState(() {
-      exams.add(exam);
-    });
+            day: exam.timestamp.subtract(const Duration(days: 1)).day,
+            month: exam.timestamp.subtract(const Duration(days: 1)).month,
+            year: exam.timestamp.subtract(const Duration(days: 1)).year,
+            hour: exam.timestamp.subtract(const Duration(days: 1)).hour,
+            minute: exam.timestamp.subtract(const Duration(days: 1)).minute));
   }
 }
 
